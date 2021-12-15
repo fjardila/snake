@@ -1,0 +1,98 @@
+<canvas id="tablero" width="400" height="400"></canvas>
+<h1>Puntuación: <span id = "points">0</span></h1>>
+
+<style>
+    #tablero{
+        border:solid rgb(30, 42, 210);  
+    }
+    h1{
+        font-family: tahoma;
+    }
+</style>
+
+<script>
+     window.onload = function(){
+        canv = document.getElementById("tablero");
+        ctx = canv.getContext("2d");
+        document.addEventListener("keydown", keyPush)
+        restart();
+        setInterval(actualizar, 1000/5);
+    }
+       function getRandomPosition() {
+        return Math.floor(Math.random() * cuadros);
+    }
+
+    function restart(){
+        cuadros = longitud = 20;
+        xv = 0;
+        yv = 0;
+        trail = [];
+        puntos =4;
+        points = document.getElementById("points");
+        points.innerHTML = "0";
+        px = getRandomPosition();
+        py = getRandomPosition();
+        ax = getRandomPosition();
+        ay = getRandomPosition();
+    }
+
+    function actualizar(){
+        console.log(px, py)
+        //movimiento
+        px += xv
+        py += yv
+        //colortablero
+        ctx.fillStyle = "gray";
+        ctx.fillRect(0, 0, canv.width, canv.height);
+        //serpiente
+        ctx.fillStyle = "lime";
+        for (var i = 0; i < trail.length; i++) {
+            ctx.fillRect(trail[i].x *longitud, trail[i].y *longitud, longitud - 2, longitud -2);
+            if(trail[i].x == px && trail[i].y == py && puntos >4){
+                alert("¡¡ GAME OVER !!");
+                restart();
+            }
+        
+        }
+        //Manzana
+        ctx.fillStyle = "red";
+        ctx.fillRect(ax * longitud, ay *longitud,longitud - 2, longitud -2)
+        // edicion manzana, 
+        if (px == ax && py ==ay){
+            puntos++;
+            points.innerHTML = (puntos *100) -500;
+            ax =getRandomPosition();
+            ay = getRandomPosition();
+        }
+        // validacion jugada
+        if (px <-1 || py < -1 || px > cuadros +1 || py> cuadros +1){
+            alert("¡¡ GAME OVER !!");
+            restart();
+        }
+        
+        // editar serpiente
+        trail.push({ x: px, y: py})
+        while (trail.length > puntos) {
+            trail.shift();
+        }
+    }
+
+    function keyPush(evt) {
+        switch (evt.keyCode) {
+            case 37:
+                xv = -1; yv = 0;
+                break;
+            case 38:
+                xv = 0; yv = -1;
+                break;
+            case 39:
+                xv =1; yv = 0;
+                break;
+            case 40:
+                xv = 0; yv = 1;
+                break;
+            
+        }
+    }
+
+</script>
